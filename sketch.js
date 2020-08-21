@@ -1,49 +1,23 @@
-var ball;
 var database;
-var position;
-
+var gameState = 0;
+var playerCount, form, player, game;
+var allPlayers;
+var distance = 0;
 function setup(){
     database = firebase.database();
     createCanvas(500,500);
-    ball = createSprite(250,250,10,10);
-    ball.shapeColor = "red";
-
-    var locofnode = database.ref("ball/Position");
-    locofnode.on("value", Readpos, Showerror);
+   game = new Game();
+   game.getState();
+   game.start();
 }
 
 function draw(){
-    background("white");
-    if(keyDown(LEFT_ARROW)){
-        writePosition(-1,0);
-    }
-    else if(keyDown(RIGHT_ARROW)){
-        writePosition(1,0);
-    }
-    else if(keyDown(UP_ARROW)){
-        writePosition(0,-1);
-    }
-    else if(keyDown(DOWN_ARROW)){
-        writePosition(0,+1);
-    }
-    drawSprites();
+    
+  if(playerCount === 4){
+    game.update(1);
+  }
+  if(gameState === 1){
+    clear();
+    game.play();
+  }
 }
-
-function writePosition(x,y){
-    database.ref("ball/Position").set({x: position.x+x, y: position.y+y});
-}
-function Readpos(data){
-    position = data.val();
-    ball.x = position.x;
-    ball.y = position.y;
-}
-function Showerror(){
-console.log("Error");
-}
-
-
-/*
-.ref() - to refer to the location of the database value that we want
-.on() - creates a listener which keeps listening to the changes in database
-
-*/
